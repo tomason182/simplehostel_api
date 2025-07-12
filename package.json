@@ -2,9 +2,12 @@
   "name": "simplehostel-api",
   "version": "1.0.0",
   "description": "",
+  "type": "commonjs",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node: dist/server.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +20,11 @@
   },
   "homepage": "https://github.com/tomason182/simplehostel_api#readme",
   "dependencies": {
-    "express": "^5.1.0"
+    "@types/debug": "^4.1.12",
+    "debug": "^4.4.1",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
