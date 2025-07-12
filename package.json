@@ -1,0 +1,22 @@
+{
+  "name": "simplehostel-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomason182/simplehostel_api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomason182/simplehostel_api/issues"
+  },
+  "homepage": "https://github.com/tomason182/simplehostel_api#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
