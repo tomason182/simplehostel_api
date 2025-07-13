@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import compression from "compression";
 import morgan from "morgan";
 import { getMySQL } from "./config/mysql.instance";
+import Container from "./Container";
 import "dotenv/config";
 
 export async function createApp() {
