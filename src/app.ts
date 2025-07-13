@@ -1,4 +1,4 @@
-import express from "express";
+import express, { ErrorRequestHandler } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import helmet from "helmet";
@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import compression from "compression";
 import morgan from "morgan";
 import { getMySQL } from "./config/mysql.instance";
+import "dotenv/config";
 
 export async function createApp() {
   const app = express();
@@ -52,10 +53,30 @@ export async function createApp() {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser(process.env.JWT_SECRET));
 
-  // Rutas (temporal)
-  app.get("/", (req, res) => {
-    res.send("Simple hostel - Typescript");
+  // Middlewara para pasar el contenedor
+  app.use((req, res, next) => {
+    res.locals.container = container;
+    next();
   });
+
+  // RUTAS
+
+  // Handler para rutas no encontradas
+  app.use((req, res) => {
+    res.status(400).json({ error: "Endpoint not found" });
+  });
+
+  // Error handler
+  const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+    let errorMessage = "Unexpedted gobalerror occurred";
+    if (err instanceof Error) {
+      errorMessage = err.message;
+    }
+    console.error(errorMessage);
+    res.status(500).json({ error: errorMessage });
+  };
+
+  app.use(errorHandler);
 
   return app;
 }
