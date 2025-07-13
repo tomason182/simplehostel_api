@@ -1,8 +1,9 @@
-import http from "node:http";
+import http, { Server } from "node:http";
 import createDebug from "debug";
 import app from "./app";
 import { logger } from "./utils/logger";
 import "dotenv/config";
+import { initMysql, getMySQL } from "./config/mysql.instance";
 const port = process.env.PORT;
 
 if (!port) {
@@ -10,17 +11,32 @@ if (!port) {
   process.exit(1);
 }
 
-const server = http.createServer(app);
-const debug = createDebug("simple-hostel-api:server");
+async function initServer(): Promise<void> {
+  try {
+    await initMysql();
 
-server.listen(port, () => logger.info(`Server started on port ${port}`));
-server.on("error", onError);
-server.on("listening", onListening);
+    const server = http.createServer(app);
+    const debug = createDebug("simple-hostel-api:server");
 
-process.on("exit", onShutdown);
-process.on("SIGTERM", onShutdown);
-process.on("SIGINT", onShutdown);
-process.on("uncaughtException", onErrorShutdown);
+    server.listen(port, () => logger.info(`Server started on port ${port}`));
+    server.on("error", onError);
+    server.on("listening", () => onListening(server, debug));
+
+    process.on("exit", () => onShutdown(server));
+    process.on("SIGTERM", () => onShutdown(server));
+    process.on("SIGINT", () => onShutdown(server));
+    process.on("uncaughtException", onErrorShutdown);
+  } catch (err) {
+    logger.error("Error iniciando el servidor: ", err);
+    process.exit(1);
+  }
+}
+
+initServer();
+
+// ------------------------------------------------------
+// Funciones auxiliares
+// ------------------------------------------------------
 
 function onError(error: NodeJS.ErrnoException): void {
   if (error.syscall !== "listen") throw error;
@@ -42,18 +58,18 @@ function onError(error: NodeJS.ErrnoException): void {
   }
 }
 
-function onListening(): void {
+function onListening(server: Server, debug: debug.Debugger): void {
   const addr = server.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr?.port;
   debug("Listening on " + bind);
 }
 
-async function onShutdown(): Promise<void> {
+async function onShutdown(server: Server): Promise<void> {
   logger.info("Shutting down the server...");
 
   try {
     // Disconnect the database
-    mysql.disconnect();
+    await getMySQL().disconnect();
   } catch (err) {
     if (err instanceof Error) {
       logger.error("Error al desconectar la base de datos: ", err.message);
@@ -74,12 +90,12 @@ async function onShutdown(): Promise<void> {
   }, 1000);
 }
 
-function onErrorShutdown(error: NodeJS.ErrnoException): void {
+async function onErrorShutdown(error: NodeJS.ErrnoException): Promise<void> {
   logger.error("An unexpected error occurred: ", error);
 
   // Disconnect the database
   try {
-    mysql.disconnect();
+    await getMySQL().disconnect();
   } catch (err) {
     if (err instanceof Error) {
       logger.error("Error al desconectar la base de datos:", err.message);
