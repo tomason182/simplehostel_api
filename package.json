@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/tomason182/simplehostel_api#readme",
   "dependencies": {
-    "@types/debug": "^4.1.12",
     "compression": "^1.8.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -34,7 +33,12 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/debug": "^4.1.12",
     "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^24.0.13",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
