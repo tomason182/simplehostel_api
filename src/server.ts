@@ -1,9 +1,9 @@
 import http, { Server } from "node:http";
 import createDebug from "debug";
-import app from "./app";
+import { createApp } from "./app";
 import { logger } from "./utils/logger";
 import "dotenv/config";
-import { initMysql, getMySQL } from "./config/mysql.instance";
+import { initMySQL, getMySQL } from "./config/mysql.instance";
 const port = process.env.PORT;
 
 if (!port) {
@@ -13,7 +13,8 @@ if (!port) {
 
 async function initServer(): Promise<void> {
   try {
-    await initMysql();
+    await initMySQL();
+    const app = await createApp();
 
     const server = http.createServer(app);
     const debug = createDebug("simple-hostel-api:server");
