@@ -1,11 +1,13 @@
-export interface CreateUserDTO {
+export interface UserDTO {
   id: number;
   username: string;
   firstName: string;
   lastName: string;
-  passwordHash: string;
+  password: string;
   isValidEmail: boolean;
+  lastResendEmail: number;
+  role: string;
   avatar: string;
-  createAt: Date;
+  createdAt: Date;
   updatedAt: Date;
 }
