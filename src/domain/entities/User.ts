@@ -107,4 +107,12 @@ export class User {
   getIsValidEmail(): boolean {
     return this.isValidEmail;
   }
+
+  getUsername(): string {
+    return this.username;
+  }
+
+  getFirstName(): string {
+    return this.firstName;
+  }
 }
