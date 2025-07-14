@@ -56,4 +56,31 @@ export class UserController {
       next(err);
     }
   }
+
+  logOut(req: Request, res: Response, next: NextFunction) {
+    return res
+      .cookie("jwt", "", {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        signed: true,
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? ".simplehostel.net"
+            : undefined,
+        maxAge: 0,
+      })
+      .cookie("isAuth", "", {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: 0,
+        domain:
+          process.env.NODE_ENV === "production"
+            ? ".simplehostel.net"
+            : undefined,
+      });
+  }
 }
