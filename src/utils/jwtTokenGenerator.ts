@@ -1,10 +1,7 @@
 //import "dotenv/config.js";
-import { sign, verify } from "jsonwebtoken";
+import { JwtPayload, sign, verify } from "jsonwebtoken";
 
-export function jwtTokenGenerator(
-  data: object,
-  expiresIn: string = "8h",
-): string {
+export function jwtTokenGenerator(data: object): string {
   const jwtSecret = process.env.JWT_SECRET;
 
   if (!jwtSecret) {
@@ -15,6 +12,20 @@ export function jwtTokenGenerator(
     sub: data,
   };
 
-  const token = sign(payload, jwtSecret, { expiresIn });
+  const token: string = sign(payload, jwtSecret, { expiresIn: "8h" });
   return token;
+}
+
+export function jwtTokenValidation(token: string): JwtPayload | string | false {
+  const jwtSecret = process.env.JWT_SECRET;
+
+  if (!jwtSecret) {
+    throw new Error("JWT_SECRET enviroment variable is not defined");
+  }
+  try {
+    const decoded = verify(token, jwtSecret);
+    return decoded;
+  } catch (err) {
+    return false;
+  }
 }
