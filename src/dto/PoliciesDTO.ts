@@ -1,3 +1,10 @@
+export interface PoliciesDTO {
+  generalPolicies: GeneralPoliciesDTO;
+  paymentPolicies: PaymentPoliciesDTO;
+  minorPolicies: MinorPoliciesDTO;
+  otherPolicies: OtherPoliciesDTO;
+}
+
 export interface GeneralPoliciesDTO {
   minLengthStay: number;
   maxLengthStay: number;
