@@ -23,7 +23,7 @@ export interface PaymentPoliciesDTO {
 
 export interface MinorPoliciesDTO {
   minCheckInAge: number;
-  acceptChildrens: boolean;
+  acceptChildren: boolean;
   minorsAdultSupervision: boolean;
   minChildAge: number;
   freeStayAge: number;
