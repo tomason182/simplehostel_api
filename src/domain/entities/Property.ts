@@ -2,7 +2,7 @@ import { Address } from "../value-objects/Address";
 import { ContactInfo } from "../value-objects/ContactInfo";
 import { Policies } from "../value-objects/Policies";
 import { Currencies } from "../value-objects/Currencies";
-import { CreatePropertyDTO } from "../../dto/PropertyDTO";
+import { PropertyDTO } from "../../dto/PropertyDTO";
 
 export class Property {
   public id: number;
@@ -37,7 +37,7 @@ export class Property {
     this.updatedAt = updatedAt;
   }
 
-  static fromDTO(dto: CreatePropertyDTO): Property {
+  static fromDTO(dto: PropertyDTO): Property {
     return new Property(
       dto.id,
       dto.propertyName,
