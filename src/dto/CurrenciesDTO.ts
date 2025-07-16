@@ -1,4 +1,4 @@
-export interface CurrencyDTO {
+export interface CurrenciesDTO {
   baseCurrency: string;
   paymentCurrency: string;
 }

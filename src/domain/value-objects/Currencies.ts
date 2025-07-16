@@ -1,6 +1,6 @@
-import { CurrencyDTO } from "../../dto/CurrencyDTO";
+import { CurrenciesDTO } from "../../dto/CurrenciesDTO";
 
-export class Currency {
+export class Currencies {
   public baseCurrency: string;
   public paymentCurrency: string;
 
@@ -9,11 +9,11 @@ export class Currency {
     this.paymentCurrency = paymentCurrency;
   }
 
-  static fromDTO(data: CurrencyDTO): Currency {
-    return new Currency(data.baseCurrency, data.paymentCurrency);
+  static fromDTO(data: CurrenciesDTO): Currencies {
+    return new Currencies(data.baseCurrency, data.paymentCurrency);
   }
 
-  toDTO(): CurrencyDTO {
+  toDTO(): CurrenciesDTO {
     return {
       baseCurrency: this.baseCurrency,
       paymentCurrency: this.paymentCurrency,
