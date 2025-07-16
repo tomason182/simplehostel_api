@@ -1,8 +1,8 @@
 import { CurrenciesDTO } from "../../dto/CurrenciesDTO";
 
 export class Currencies {
-  public baseCurrency: string;
-  public paymentCurrency: string;
+  public readonly baseCurrency: string;
+  public readonly paymentCurrency: string;
 
   constructor(baseCurrency: string, paymentCurrency: string) {
     this.baseCurrency = baseCurrency;

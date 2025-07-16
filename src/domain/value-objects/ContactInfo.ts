@@ -1,13 +1,13 @@
 import { ContactInfoDTO } from "../../dto/ContactInfoDTO";
 
 export class ContactInfo {
-  public email: string;
-  public phoneCallsCode: string;
-  public phoneCalls: string;
-  public phoneWhatsappCode: string;
-  public phoneWhatsApp: string;
-  public createdAt: Date;
-  public updatedAt: Date;
+  public readonly email: string;
+  public readonly phoneCallsCode: string;
+  public readonly phoneCalls: string;
+  public readonly phoneWhatsappCode: string;
+  public readonly phoneWhatsApp: string;
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
 
   constructor(
     email: string,

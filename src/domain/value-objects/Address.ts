@@ -1,16 +1,18 @@
 import { AddressDTO } from "../../dto/AddressDTO";
 
 export class Address {
-  public houseNumber: string;
-  public street: string;
-  public city: string;
-  public postalCode: string;
-  public state: string;
-  public country: string;
-  public countryCode: string;
-  public lat: number;
-  public lon: number;
-  public osmId: string;
+  public readonly houseNumber: string;
+  public readonly street: string;
+  public readonly city: string;
+  public readonly postalCode: string;
+  public readonly state: string;
+  public readonly country: string;
+  public readonly countryCode: string;
+  public readonly lat: number;
+  public readonly lon: number;
+  public readonly osmId: string;
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
 
   constructor(
     houseNumber: string,
@@ -23,6 +25,8 @@ export class Address {
     lat: number,
     lon: number,
     osmId: string,
+    createdAt: Date,
+    updatedAt: Date,
   ) {
     this.houseNumber = houseNumber;
     this.street = street;
@@ -34,6 +38,8 @@ export class Address {
     this.lat = lat;
     this.lon = lon;
     this.osmId = osmId;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   static fromDTO(data: AddressDTO): Address {
@@ -48,6 +54,25 @@ export class Address {
       data.lat,
       data.lon,
       data.osmId,
+      data.createdAt,
+      data.updatedAt,
     );
+  }
+
+  toDTO(): AddressDTO {
+    return {
+      houseNumber: this.houseNumber,
+      street: this.street,
+      city: this.city,
+      postalCode: this.postalCode,
+      state: this.state,
+      country: this.country,
+      countryCode: this.countryCode,
+      lat: this.lat,
+      lon: this.lon,
+      osmId: this.osmId,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 }
