@@ -1,3 +1,10 @@
+export interface CreateUserDTO {
+  username: string;
+  firstName: string;
+  password: string;
+  lastName?: string;
+}
+
 export interface UserDTO {
   id: number;
   username: string;
