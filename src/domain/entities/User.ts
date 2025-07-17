@@ -116,6 +116,13 @@ export class User {
   }
 
   // Getter and Setters
+  getId(): number {
+    const id = this.id;
+    if (!id) {
+      throw new Error("User id is not set");
+    }
+    return id;
+  }
   getLastResendEmail(): number {
     return this.lastResendEmail;
   }

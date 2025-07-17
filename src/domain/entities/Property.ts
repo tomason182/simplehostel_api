@@ -2,29 +2,29 @@ import { Address } from "../value-objects/Address";
 import { ContactInfo } from "../value-objects/ContactInfo";
 import { Policies } from "../value-objects/Policies";
 import { Currencies } from "../value-objects/Currencies";
-import { PropertyDTO } from "../../dto/PropertyDTO";
+import { CreatePropertyDTO, PropertyDTO } from "../../dto/PropertyDTO";
 
 export class Property {
-  public id: number;
+  public id: number | null;
   public propertyName: string;
-  public address: Address;
-  public contactInfo: ContactInfo;
-  public policies: Policies;
-  public currencies: Currencies;
-  public description: string;
-  public createdAt: Date;
-  public updatedAt: Date;
+  public address: Address | null;
+  public contactInfo: ContactInfo | null;
+  public policies: Policies | null;
+  public currencies: Currencies | null;
+  public description: string | null;
+  public createdAt: Date | null;
+  public updatedAt: Date | null;
 
   constructor(
-    id: number,
+    id: number | null,
     propertyName: string,
-    address: Address,
-    contactInfo: ContactInfo,
-    policies: Policies,
-    currencies: Currencies,
-    description: string,
-    createdAt: Date,
-    updatedAt: Date,
+    address: Address | null,
+    contactInfo: ContactInfo | null,
+    policies: Policies | null,
+    currencies: Currencies | null,
+    description: string | null,
+    createdAt: Date | null,
+    updatedAt: Date | null,
   ) {
     this.id = id;
     this.propertyName = propertyName;
@@ -49,5 +49,30 @@ export class Property {
       dto.createdAt,
       dto.updatedAt,
     );
+  }
+
+  static fromCreatePropertyDTO(dto: CreatePropertyDTO): Property {
+    return new Property(
+      null,
+      dto.propertyName,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    );
+  }
+
+  // Getters and Setters
+  getId(): number {
+    const id = this.id;
+
+    if (!id) {
+      throw new Error("Property id is not setted");
+    }
+
+    return id;
   }
 }
