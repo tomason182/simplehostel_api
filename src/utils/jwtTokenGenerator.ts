@@ -1,7 +1,10 @@
 //import "dotenv/config.js";
 import { JwtPayload, sign, verify } from "jsonwebtoken";
 
-export function jwtTokenGenerator(data: object): string {
+export function jwtTokenGenerator(
+  data: object,
+  expirationTimeSeg: number,
+): string {
   const jwtSecret = process.env.JWT_SECRET;
 
   if (!jwtSecret) {
@@ -12,7 +15,9 @@ export function jwtTokenGenerator(data: object): string {
     sub: data,
   };
 
-  const token: string = sign(payload, jwtSecret, { expiresIn: "8h" });
+  const token: string = sign(payload, jwtSecret, {
+    expiresIn: expirationTimeSeg,
+  });
   return token;
 }
 
