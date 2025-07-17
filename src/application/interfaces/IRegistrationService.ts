@@ -5,5 +5,5 @@ export interface IRegistrationService {
   register(
     userDTO: CreateUserDTO,
     propertyDTO: CreatePropertyDTO,
-  ): Promise<{ id: string }>;
+  ): Promise<{ status: string; msg: string }>;
 }
