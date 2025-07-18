@@ -68,30 +68,8 @@ export class RegistrationService implements IRegistrationService {
     // 7. Guardamos el accessControl
     await this.accessControl.save(accessControl);
 
-    // 8. Enviamos email de confirmación
-    const tokenData = {
-      id: user.getId(),
-      email: user.getUsername(),
-    };
-
-    const token = jwtTokenGenerator(tokenData, 900); // el token expira en 900 segundos | 15min
-    const confirmationLink =
-      process.env.API_URL + "/accounts/email-validation/" + token;
-    const to = user.getUsername();
-    const subject = "Confirma tu correo electrónico";
-    const templateName = "email_confirmation";
-    const data = {
-      logoUrl: process.env.LOGO_URL,
-      appName: process.env.APP_NAME,
-      websiteUrl: process.env.WEBSITE_URL,
-      name: user.getFirstName(),
-      confirmationLink: confirmationLink,
-      year: new Date().getFullYear.toString(),
-      companyName: process.env.COMPANY_NAME,
-      supportEmail: process.env.SUPPORT_EMAIL,
-    };
-
-    await this.emailService.sendEmail(to, subject, templateName, data, "es");
+    // 8. Enviamos email de confirmació
+    await this.sendConfirmationEmail(user);
 
     return {
       status: "ok",
@@ -147,9 +125,78 @@ export class RegistrationService implements IRegistrationService {
 
     return {
       status: "ok",
-      msg: "SUCCESS",
+      msg: "ACCOUNT_VALIDATED",
     };
+  }
+
+  async resendEmail(email: string): Promise<{ status: string; msg: string }> {
+    // 1. Buscar usuario por email
+    const user = await this.userRepository.findByUsername(email);
+
+    if (user === null) {
+      return {
+        status: "error",
+        msg: "USER_NOT_FOUND",
+      };
+    }
+
+    // 2. Verificar que el usuario no este validado.
+    const isValidAccount = user.checkValidAccount();
+    if (isValidAccount === true) {
+      return {
+        status: "error",
+        msg: "ACCOUNT_ALREADY_VALIDATED",
+      };
+    }
+
+    // 3. Verificar tiempo de espera.
+    const canResendEmail = user.canResendEmail();
+
+    if (canResendEmail === false) {
+      return {
+        status: "error",
+        msg: "WAITING_PERIOD",
+      };
+    }
+
+    // 4. Actualizar last resend email
+    user.setLastResendEmail();
+    await this.userRepository.updateLastResendEmail(user);
+
+    // 5. Reenviar mail de confiramcion
+    await this.sendConfirmationEmail(user);
+
+    return {
+      status: "ok",
+      msg: "EMAIL_RESEND",
+    };
+  }
+
+  private async sendConfirmationEmail(user: User): Promise<void> {
+    const tokenData = {
+      id: user.getId(),
+      email: user.getUsername(),
+    };
+
+    const token = jwtTokenGenerator(tokenData, 900); // el token expira en 900 segundos | 15min
+    const confirmationLink =
+      process.env.API_URL + "/accounts/email-validation/" + token;
+    const to = user.getUsername();
+    const subject = "Confirma tu correo electrónico";
+    const templateName = "email_confirmation";
+    const data = {
+      logoUrl: process.env.LOGO_URL,
+      appName: process.env.APP_NAME,
+      websiteUrl: process.env.WEBSITE_URL,
+      name: user.getFirstName(),
+      confirmationLink: confirmationLink,
+      year: new Date().getFullYear.toString(),
+      companyName: process.env.COMPANY_NAME,
+      supportEmail: process.env.SUPPORT_EMAIL,
+    };
+
+    await this.emailService.sendEmail(to, subject, templateName, data, "es");
   }
 }
 
-RegistrationService.prototype.register.useTransaction = true;
+(RegistrationService.prototype.register as any).useTransaction = true;

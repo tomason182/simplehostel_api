@@ -6,4 +6,6 @@ export interface IRegistrationService {
     userDTO: CreateUserDTO,
     propertyDTO: CreatePropertyDTO,
   ): Promise<{ status: string; msg: string }>;
+
+  validateEmail(token: string): Promise<{ status: string; msg: string }>;
 }

@@ -49,9 +49,56 @@ export class RegistrationController {
         propertyDTO,
       );
 
-      return res.status(200).json(result);
+      if (result.status && result.status === "error") {
+        return res.status(400).json({
+          status: "error",
+          msg: result.msg || "UNKNOWN_ERROR",
+        });
+      }
 
-      res.status(200).json({});
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async validateEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response | void> {
+    try {
+      const token = req.params.token;
+
+      const result = await this.registrationService.validateEmail(token);
+
+      if (result.status && result.status === "error") {
+        return res.status(400).json({
+          status: "error",
+          msg: result.msg || "UNNKOWN_ERROR",
+        });
+      }
+
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async resendEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const email = req.params.email;
+
+      const result = await this.registrationService.resendEmail(email);
+
+      if (result.status && result.status === "error") {
+        return res.status(400).json({
+          status: "error",
+          msg: result.msg || "UNKNOWN_ERROR",
+        });
+      }
+
+      return res.status(200).json(result);
     } catch (err) {
       next(err);
     }
