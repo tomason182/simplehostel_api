@@ -7,8 +7,12 @@ import { CreatePropertyDTO } from "../dto/PropertyDTO";
 import { CreateUserDTO } from "../dto/UserDTO";
 import { EmailServiceSMTP } from "../infrastructure/email/EmailServiceSMTP";
 import { IAccessControlRepository } from "../domain/ports/IAccessControlRepository";
-import { jwtTokenGenerator } from "../utils/jwtTokenGenerator";
+import {
+  jwtTokenGenerator,
+  jwtTokenValidation,
+} from "../utils/jwtTokenGenerator";
 import { IRegistrationService } from "./interfaces/IRegistrationService";
+import { JwtPayload } from "jsonwebtoken";
 
 export class RegistrationService implements IRegistrationService {
   constructor(
@@ -29,7 +33,10 @@ export class RegistrationService implements IRegistrationService {
     );
 
     if (userExist !== null) {
-      throw new Error("USER_EXIST");
+      return {
+        status: "error",
+        msg: "USER_EXIST",
+      };
     }
 
     // 2. Creamos la entidad usuario
@@ -91,4 +98,58 @@ export class RegistrationService implements IRegistrationService {
       msg: "USER_REGISTRATION_SUCCESS",
     };
   }
+
+  async validateEmail(token: string) {
+    // 1. Decodificar el token
+    const decoded = jwtTokenValidation(token) as
+      | (JwtPayload & { sub: { id: string; email: string } })
+      | false;
+
+    if (decoded === false || !decoded.sub) {
+      return {
+        status: "error",
+        msg: "INVALID_OR_EXPIRED_TOKEN",
+      };
+    }
+
+    // 2. Obtenemos el userId. Token sub = { id:id, email: email}
+    const id = decoded.sub.id;
+
+    // 3. Buscar el usuario por ID
+    const user = await this.userRepository.findById(id);
+
+    if (!user) return { status: "error", msg: "USER_NOT_FOUND" };
+
+    // 4. Chequear si la cuenta ya fue validada.
+    const isValidAccount = user.checkValidAccount();
+
+    if (isValidAccount === true) {
+      return { status: "error", msg: "ACCOUNT_ALREADY_VALIDATED" };
+    }
+
+    // 5. Establecemos el mail como valido. (NO TIENE SENTIDO PORQUE SE VALIDA EN EL SIGUIENTE PASO)
+    //user.setValidEmail()
+
+    // 6. Actualizamos solamente "isValidEmail" acà
+    await this.userRepository.validateEmail(user.getId());
+
+    // 7. Auto enviarme un email avisando que se registro un nuevo usuario
+    const to = process.env.SUPPORT_EMAIL || "support@simplehostel.net";
+    const subject = "Se registro un nuevo hostel";
+    const templateName = "new_register";
+    const data = {
+      logoUrl: process.env.LOGO_URL || "",
+      name: user.getFirstName() || "Sin nombre",
+      email: user.getUsername() || "Sin nombre",
+    };
+
+    await this.emailService.sendEmail(to, subject, templateName, data);
+
+    return {
+      status: "ok",
+      msg: "SUCCESS",
+    };
+  }
 }
+
+RegistrationService.prototype.register.useTransaction = true;
