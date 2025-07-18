@@ -115,6 +115,10 @@ export class User {
     return now - this.lastResendEmail > this.waitingPeriod;
   }
 
+  checkValidAccount(): boolean {
+    return this.isValidEmail === true;
+  }
+
   // Getter and Setters
   getId(): number {
     const id = this.id;
