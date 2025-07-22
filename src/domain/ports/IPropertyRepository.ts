@@ -4,4 +4,5 @@ export interface IPropertyRepository {
   save(property: Property): Promise<void>;
 
   findPropertyDetails(propertyId: number): Promise<Property>;
+  findById(propertyId: number): Promise<Property>;
 }
