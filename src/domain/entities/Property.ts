@@ -75,4 +75,8 @@ export class Property {
 
     return id;
   }
+
+  setDescription(description: string): void {
+    this.description = description;
+  }
 }
