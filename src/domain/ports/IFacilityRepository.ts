@@ -1,7 +1,7 @@
 export interface IFacilityRepository {
   getFacilitiesIdsForProperty(propertyId: number): Promise<Array<number>>;
 
-  doAllExist(facilitiesId: Array<number>): Array<number>;
+  doAllExist(facilitiesId: Array<number>): Promise<Array<number>>;
 
   addFacilitiesToProperty(
     propertyId: number,
